@@ -18,4 +18,10 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
+//routes import
+
+import router from "./routes/user.router.js";
+
+app.use("/api/users", router); // /api/users is a prefix
+
 export { app };

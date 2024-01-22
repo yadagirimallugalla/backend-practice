@@ -32,7 +32,7 @@ const userSchema = new Schema(
     coverImage: { type: String },
     watchHistory: [
       {
-        type: Schema.Types.ObjectId(),
+        type: Schema.Types.ObjectId,
         ref: "Video",
       },
     ],
@@ -45,11 +45,12 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
+//middleware for hashing the password before storing in the DB
 userSchema.pre(
   ("save",
   async function (next) {
     if (!this.isModified("password")) return next(); // if password not modified exit
-    this.password = bcrypt.hash(this.password, 10); //data,saltRounds
+    this.password = await bcrypt.hash(this.password, 10); //data,saltRounds
     next();
   })
 );
