@@ -1,15 +1,20 @@
+import path from "path";
+import { fileURLToPath } from "url";
 import multer from "multer";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "/public/temp");
+    const destinationPath = path.join(__dirname, "../public/temp");
+    cb(null, destinationPath);
   },
-
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, this.filename + "-" + uniqueSuffix);
-
-    // cb(null, file.originalname); //for storing with file original name
+    cb(null, file.originalname);
   },
 });
-export const upload = multer({ storage });
+
+export const upload = multer({
+  storage,
+});

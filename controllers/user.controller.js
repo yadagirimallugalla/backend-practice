@@ -6,7 +6,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 const registeredUser = asyncHandler(async (req, res) => {
   const { username, email, fullname, password } = req.body;
-  console.log("body", req.body);
+  // console.log("body", req.body);
+  // console.log("files", req.files);
 
   //validatin for empty fields
   if (
@@ -16,18 +17,27 @@ const registeredUser = asyncHandler(async (req, res) => {
   }
 
   //find the existing user with email and username
-  const existedUser = User.findOne({ $or: [{ username }, { email }] });
+  const existedUser = await User.findOne({ $or: [{ username }, { email }] });
 
   if (existedUser) {
     throw new ApiError(409, "User with same email or username already exists");
   }
-  console.log("existedUser", existedUser);
+
+  // console.log("req.files", req.files);
 
   const avatarLocalPath = req.files?.avatar[0]?.path; //file fullpath
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
-  console.log("avatarLocalPath", avatarLocalPath);
-  console.log("coverImageLocalPath", coverImageLocalPath);
+  let coverImageLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files?.coverImage) &&
+    req.files?.coverImage.length > 0
+  ) {
+    coverImageLocalPath = req.files?.coverImage[0]?.path;
+  }
+  // console.log("avatarLocalPath", avatarLocalPath);
+  // console.log("coverImageLocalPath", coverImageLocalPath);
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file is required");
@@ -38,20 +48,19 @@ const registeredUser = asyncHandler(async (req, res) => {
 
   if (!avatar) throw new ApiError(400, "Avatar file is required");
 
-  const user = User.create({
-    username: username.toLowercase(),
+  const user = await User.create({
+    username: username.toLowerCase(),
     avatar: avatar.url,
     coverImage: coverImage?.url || "",
     email,
     fullname,
     password,
   });
-
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
 
-  if (createdUser) {
+  if (!createdUser) {
     throw new ApiError(500, "Something went wrong while registering the user");
   }
 
