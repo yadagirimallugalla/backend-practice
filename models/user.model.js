@@ -46,14 +46,11 @@ const userSchema = new Schema(
 );
 
 //middleware for hashing the password before storing in the DB
-userSchema.pre(
-  ("save",
-  async function (next) {
-    if (!this.isModified("password")) return next(); // if password not modified exit
-    this.password = await bcrypt.hash(this.password, 10); //data,saltRounds
-    next();
-  })
-);
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next(); // if password not modified exit
+  this.password = await bcrypt.hash(this.password, 10); //data,saltRounds
+  next();
+});
 
 userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
