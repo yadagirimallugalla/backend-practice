@@ -8,6 +8,7 @@ import {
   refreshAccessToken,
   registeredUser,
   updatePassword,
+  updateUserAccount,
   updateUserAvatar,
   updateUserCoverImage,
 } from "../controllers/user.controller.js";
@@ -36,7 +37,7 @@ router.route("/refresh-token").post(refreshAccessToken);
 
 router.route("/update-password").post(verifyJWT, updatePassword);
 router.route("/current-user").get(verifyJWT, getCurrentUser);
-router.route("/update-account").patch(verifyJWT, updateAccount);
+router.route("/update-account").patch(verifyJWT, updateUserAccount);
 
 router
   .route("/update-avatar")
