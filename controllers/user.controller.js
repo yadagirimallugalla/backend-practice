@@ -380,7 +380,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
           $size: "$subscribers", //dollar sign for fields
         },
         chennalsSubscribedToCount: {
-          $size: "subscribedTo",
+          $size: "$subscribedTo",
         },
         isSubscribed: {
           $cond: {
@@ -418,6 +418,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 });
 
 const getWatchHistory = asyncHandler(async (req, res) => {
+  console.log("userid", req.user?._id);
   const user = await User.aggregate([
     {
       $match: { _id: new mongoose.Types.ObjectId(req.user?._id) },
