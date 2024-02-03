@@ -26,10 +26,10 @@ const userSchema = new Schema(
       index: true, //helpful in searching
     },
     avatar: {
-      type: String, //URL
+      type: Object, //URL
       required: true,
     },
-    coverImage: { type: String },
+    coverImage: { type: Object },
     watchHistory: [
       {
         type: Schema.Types.ObjectId,

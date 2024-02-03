@@ -7,12 +7,13 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadOnCloudinary = async (filePath) => {
+const uploadOnCloudinary = async (filePath, folder) => {
   try {
     if (!filePath) {
       return null;
     }
     const response = await cloudinary.uploader.upload(filePath, {
+      folder,
       resource_type: "auto",
     });
     console.log("File uploaded to Cloudinary", response?.url);
@@ -23,13 +24,20 @@ const uploadOnCloudinary = async (filePath) => {
   }
 };
 
-export { uploadOnCloudinary };
+const deleteFromCloudinary = async (publicId) => {
+  console.log("publicId from Cloudinary", publicId);
+  try {
+    if (!publicId) {
+      return null;
+    }
 
-// cloudinary.uploader.upload(
-//   "https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg",
-//   { public_id: "Olympic_flag" }
-// ),
-//   function (err, res) {
-//     if (err) throw err;
-//     console.log(res);
-//   };
+    const response = await cloudinary.uploader.destroy(publicId);
+
+    console.log("File deleted from Cloudinary", response);
+  } catch (error) {
+    fs.unlinkSync(publicId);
+    return null;
+  }
+};
+
+export { uploadOnCloudinary, deleteFromCloudinary };
